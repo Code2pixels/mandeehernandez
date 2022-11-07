@@ -10,40 +10,19 @@ services:
     sizeGB: 20
   envVars:
   - key: WORDPRESS_DB_HOST
-    value: mandee-mysql-database
+    value: code2pixels-mysql-database
   - key: WORDPRESS_DB_NAME
     fromService:
-      name: mandee-mysql-database
+      name: code2pixels-mysql-database
       type: pserv
       envVarKey: MYSQL_DATABASE
   - key: WORDPRESS_DB_USER
     fromService:
-      name: mandee-mysql-database
+      name:code2pixels-mysql-database
       type: pserv
       envVarKey: MYSQL_USER
   - key: WORDPRESS_DB_PASSWORD
     fromService:
-      name: mandee-mysql-database
+      name: code2pixels-mysql-database
       type: pserv
       envVarKey: MYSQL_PASSWORD
-- type: pserv
-  name: mandee-mysql-database
-  repo: https://github.com/Code2pixels/mandeehernandez
-  env: docker
-  plan: starter
-  autoDeploy: false
-  disk:
-    name: mandee-mysql-database
-    mountPath: /var/lib/mysql
-    sizeGB: 20
-  envVars:
-  - key: MYSQL_DATABASE
-    value: mysql
-  - key: MYSQL_USER
-    value: mysql
-  - key: MYSQL_PASSWORD
-    generateValue: true
-  - key: MYSQL_ROOT_PASSWORD
-    generateValue: true
-  - key: PORT
-    value: 3306
