@@ -11,22 +11,22 @@ services:
   envVars:
   - key: WORDPRESS_DB_HOST
     fromService:
-      name: mandee-mysql-wordpress
+      name: mandee-mysql-database
       type: pserv
       property: host
   - key: WORDPRESS_DB_NAME
     fromService:
-      name: mandee-mysql-wordpress
+      name: mandee-mysql-database
       type: pserv
       envVarKey: MYSQL_DATABASE
   - key: WORDPRESS_DB_USER
     fromService:
-      name: mandee-mysql-wordpress
+      name: mandee-mysql-database
       type: pserv
       envVarKey: MYSQL_USER
   - key: WORDPRESS_DB_PASSWORD
     fromService:
-      name: mandee-mysql-wordpress
+      name: mandee-mysql-database
       type: pserv
       envVarKey: MYSQL_PASSWORD
 - type: pserv
@@ -36,7 +36,7 @@ services:
   plan: starter
   autoDeploy: false
   disk:
-    name: mandee-mysql-wordpress
+    name: mandee-mysql-database
     mountPath: /var/lib/mysql
     sizeGB: 20
   envVars:
