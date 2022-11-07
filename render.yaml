@@ -1,11 +1,11 @@
 services:
 - type: web
-  name: mandee-wordpress
+  name: mandee-website
   env: docker
   plan: starter
   autoDeploy: true
   disk:
-    name: mandee-wordpress
+    name: mandee-website
     mountPath: /var/www/html
     sizeGB: 20
   envVars:
