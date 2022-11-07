@@ -3,7 +3,7 @@ services:
   name: mandee-wordpress
   env: docker
   plan: starter
-  autoDeploy: false
+  autoDeploy: true
   disk:
     name: mandee-wordpress
     mountPath: /var/www/html
