@@ -18,7 +18,7 @@ services:
       envVarKey: MYSQL_DATABASE
   - key: WORDPRESS_DB_USER
     fromService:
-      name:code2pixels-mysql-database
+      name: code2pixels-mysql-database
       type: pserv
       envVarKey: MYSQL_USER
   - key: WORDPRESS_DB_PASSWORD
