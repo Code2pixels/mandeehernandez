@@ -9,4 +9,26 @@ services:
     mountPath: /var/www/html
     sizeGB: 20
   envVars:
-  fromGroup: code2pixels-main-env
+  - fromGroup: code2pixels-main-env
+
+envVarGroups:
+- name: code2pixels-main-env
+  envVars:
+    - key: MYSQL_DATABASE
+      value: a37f950dce08677491e7df5a22c62cba
+    - key: MYSQL_USER
+      value: 48e44f72cbd8fda2ba73d0bb9f7363f9
+    - key: MYSQL_PASSWORD
+      value: f8d68204f0167dc0aa01f334da81973f
+    - key: MYSQL_ROOT_PASSWORD
+      value: 9b6f339cf3cdaf1b4003d34b31f6e2c0
+    - key: PORT
+      value: 3306
+    - key: WORDPRESS_DB_HOST
+      value: code2pixels-mysql-database
+    - key: WORDPRESS_DB_NAME
+      value: a37f950dce08677491e7df5a22c62cba
+    - key: WORDPRESS_DB_USER
+      value: 48e44f72cbd8fda2ba73d0bb9f7363f9
+    - key: WORDPRESS_DB_PASSWORD
+      value: f8d68204f0167dc0aa01f334da81973f
