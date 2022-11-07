@@ -10,10 +10,7 @@ services:
     sizeGB: 20
   envVars:
   - key: WORDPRESS_DB_HOST
-    fromService:
-      name: mandee-mysql-database
-      type: pserv
-      property: host
+    value: mandee-mysql-database
   - key: WORDPRESS_DB_NAME
     fromService:
       name: mandee-mysql-database
