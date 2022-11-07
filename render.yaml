@@ -28,7 +28,7 @@ services:
       envVarKey: MYSQL_PASSWORD
 - type: pserv
   name: mandee-mysql-database
-  repo: https://github.com/render-examples/mysql.git
+  repo: https://github.com/Code2pixels/mandeehernandez
   env: docker
   plan: starter
   autoDeploy: false
