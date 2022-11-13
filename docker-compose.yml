@@ -28,3 +28,4 @@ services:
       - WORDPRESS_DB_NAME=a37f950dce08677491e7df5a22c62cba
 volumes:
   db_data:
+command: 'cp wp-config.php /var/www/html/wp-config.php'
