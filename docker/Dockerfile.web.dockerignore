@@ -1,0 +1,30 @@
+# PROJECT FILES
+/bin
+!/bin/wordpress-clean-default-dependencies.sh
+/.git
+/.github
+
+# THEME FILES
+/wp-content/themes/detroit-axle/assets/dist
+
+# DOCKER
+/docker/*
+!/docker/nginx
+
+# WORDPRESS ENVIRONMENT
+.env*
+
+# COMPOSER
+/vendor
+auth.json
+
+# DATABASE
+/database
+
+# MISC FILES
+/.idea
+.DS_Store
+.vs_code
+
+# TERRAFORM
+/terraform

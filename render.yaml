@@ -1,34 +1,62 @@
 # services:
+# # Production Services
 # - type: web
-#   name: mandee-website
+#   name: detroit-axle-web-production
 #   env: docker
+#   region: ohio
 #   plan: starter
-#   autoDeploy: true
-#   disk:
-#     name: mandee-website
-#     mountPath: /var/www/html
-#     sizeGB: 20
+#   branch: main
+#   dockerfilePath: ./docker/Dockerfile.web
+#   dockerContext: .
 #   envVars:
-#   - fromGroup: code2pixels-main-env
+#     - key: PHP_FPM_HOST
+#       fromService:
+#         name: detroit-axle-php-fpm-production
+#         type: pserv
+#         property: host
+#     - key: PHP_FPM_PORT
+#       fromService:
+#         name: detroit-axle-php-fpm-production
+#         type: pserv
+#         property: port
+#     - key: PHP_FPM_WP_ADMIN_HOST
+#       fromService:
+#         name: detroit-axle-php-fpm-admin-production
+#         type: pserv
+#         property: host
+#     - key: PHP_FPM_WP_ADMIN_PORT
+#       fromService:
+#         name: detroit-axle-php-fpm-admin-production
+#         type: pserv
+#         property: port
+#     - fromGroup: detroit-axle-env-var-group
+
+# - type: web
+#   name: detroit-axle-adminer-web-ohio
+#   env: docker
+#   region: ohio
+#   plan: free
+#   branch: main
+#   dockerfilePath: ./docker/adminer/Dockerfile
+#   dockerContext: .
+#   autoDeploy: false
 
 # envVarGroups:
-# - name: code2pixels-main-env
+# - name: code2pixels-env-var-group
 #   envVars:
-#     - key: MYSQL_DATABASE
-#       value: a37f950dce08677491e7df5a22c62cba
-#     - key: MYSQL_USER
-#       value: 48e44f72cbd8fda2ba73d0bb9f7363f9
-#     - key: MYSQL_PASSWORD
-#       value: f8d68204f0167dc0aa01f334da81973f
-#     - key: MYSQL_ROOT_PASSWORD
-#       value: 9b6f339cf3cdaf1b4003d34b31f6e2c0
-#     - key: PORT
-#       value: 3306
-#     - key: WORDPRESS_DB_HOST
-#       value: code2pixels-mysql-database
-#     - key: WORDPRESS_DB_NAME
-#       value: a37f950dce08677491e7df5a22c62cba
-#     - key: WORDPRESS_DB_USER
-#       value: 48e44f72cbd8fda2ba73d0bb9f7363f9
-#     - key: WORDPRESS_DB_PASSWORD
-#       value: f8d68204f0167dc0aa01f334da81973f
+#     - key: AUTH_KEY
+#       generateValue: true
+#     - key: SECURE_AUTH_KEY
+#       generateValue: true
+#     - key: LOGGED_IN_KEY
+#       generateValue: true
+#     - key: NONCE_KEY
+#       generateValue: true
+#     - key: AUTH_SALT
+#       generateValue: true
+#     - key: SECURE_AUTH_SALT
+#       generateValue: true
+#     - key: LOGGED_IN_SALT
+#       generateValue: true
+#     - key: NONCE_SALT
+#       generateValue: true

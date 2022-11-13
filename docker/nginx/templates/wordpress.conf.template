@@ -1,0 +1,123 @@
+upstream php-fpm {
+    server ${PHP_FPM_HOST}:${PHP_FPM_PORT};
+}
+
+upstream php-fpm-wp-admin {
+    server ${PHP_FPM_WP_ADMIN_HOST}:${PHP_FPM_WP_ADMIN_PORT};
+}
+
+server {
+    listen       ${PORT} default_server;
+    listen       [::]:${PORT} default_server;
+    server_name  _;
+
+    root /app/wordpress;
+    index index.php;
+
+    # Yoast sitemap config
+    rewrite ^/sitemap_index.xml$ /index.php?sitemap=1 last;
+    rewrite ^/([^/]+?)-sitemap([0-9]+)?\.xml$ /index.php?sitemap=$1&sitemap_n=$2 last;
+
+    location ^~ ^/wp-json/detroit-axle/autoplus/sync {
+        try_files $uri $uri/ /index.php?$args;
+
+        location ~ \.php$ {
+            # Fusionary IP:
+            allow 52.144.33.220;
+            # Private IPs:
+            allow 10.0.0.0/8;
+            allow 172.16.0.0/12;
+            allow 192.168.0.0/16;
+            allow 127.0.0.1;
+            deny all;
+            try_files $uri /index.php;
+            include fastcgi_params;
+            fastcgi_intercept_errors on;
+            fastcgi_pass php-fpm-wp-admin;
+            fastcgi_read_timeout 1d;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
+
+    location = /wp-admin {
+        return 301 /wp-admin/;
+    }
+
+    location ^~ /wp-admin {
+        try_files $uri $uri/ /index.php?$args;
+
+        location ~ \.php$ {
+            try_files $uri /index.php;
+            include fastcgi_params;
+            fastcgi_intercept_errors on;
+            fastcgi_pass php-fpm-wp-admin;
+            fastcgi_read_timeout 300s;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
+
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        try_files $uri $uri/ /index.php?$args;
+
+        location ~ \.php$ {
+            try_files $uri /index.php;
+            include fastcgi_params;
+            fastcgi_intercept_errors on;
+            fastcgi_pass php-fpm;
+            fastcgi_read_timeout 300s;
+            fastcgi_split_path_info ^(.+\.php)(/.+)$;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        }
+    }
+
+    location ~* ^.+.(ogg|ogv|svg|svgz|eot|otf|woff|mp4|ttf|css|rss|atom|js|jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|ppt|tar|mid|midi|wav|bmp|rtf)$ {
+        access_log off;	
+        log_not_found off;
+        expires max;
+    }
+
+    location = /robots.txt {
+        access_log off;
+        log_not_found off;
+    }
+
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
+    }
+
+    # Deny public access to wp-config.php
+    location ~* wp-config.php {
+        deny all;
+    }
+
+    # Limit access to wp-login.php
+    location = /wp-login.php {
+        try_files $uri /index.php;
+        include fastcgi_params;
+        fastcgi_intercept_errors on;
+        fastcgi_pass php-fpm;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ ^/(status|ping)$ {
+        access_log off;
+        # Private IPs:
+        allow 10.0.0.0/8;
+        allow 172.16.0.0/12;
+        allow 192.168.0.0/16;
+        allow 127.0.0.1;
+        allow 38.131.235.117;
+        allow 52.144.33.220/32;
+        deny all;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+        fastcgi_pass php-fpm;
+    }
+}

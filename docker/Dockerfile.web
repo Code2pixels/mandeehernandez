@@ -1,0 +1,77 @@
+# syntax=docker/dockerfile:1.2
+
+FROM node:16 as node
+WORKDIR /app
+COPY wp-content/themes/detroit-axle /app
+RUN npm ci
+RUN npm run build-production
+
+FROM composer:2.1 as composer
+WORKDIR /app
+COPY /bin/wordpress-clean-default-dependencies.sh composer.json composer.lock /app/
+# The auth.json file is added using a Render secret file
+RUN --mount=type=secret,id=auth_json,dst=/etc/secrets/auth.json cp /etc/secrets/auth.json /app/auth.json
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts --prefer-dist
+RUN /app/wordpress-clean-default-dependencies.sh /app
+
+FROM nginx:1.21.4
+
+ENV NGINX_VERSION=1.21.4
+
+ENV PHP_FPM_HOST=php-fpm
+ENV PHP_FPM_PORT=9000
+
+ENV PORT=80
+
+USER root
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    build-essential \
+    libpcre3 \
+    libpcre3-dev \
+    zlib1g \
+    zlib1g-dev && \
+    apt-get clean
+
+RUN cd /tmp && wget http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz && \
+    tar -zxvf nginx-$NGINX_VERSION.tar.gz && mv nginx-$NGINX_VERSION nginx && rm nginx-$NGINX_VERSION.tar.gz
+
+RUN cd /tmp/nginx && ./configure \
+    --sbin-path=/usr/local/sbin \
+    --conf-path=/etc/nginx/nginx.conf \
+    --error-log-path=/var/log/nginx/error.log \
+    --http-log-path=/var/log/nginx/access.log \
+    --user=www-data \
+    --group=www-data \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --without-mail_pop3_module \
+    --without-mail_imap_module \
+    --without-mail_smtp_module && \
+    make && make install && \
+    rm -r /tmp/nginx
+
+RUN apt-get autoremove
+
+RUN mkdir -p /etc/nginx/conf.d && \
+    chown -R www-data:www-data /etc/nginx/conf.d && \
+    chmod -R 775 /etc/nginx/conf.d && \
+    rm /etc/nginx/conf.d/*
+
+RUN touch /run/nginx.pid /var/log/nginx/error.log /var/log/nginx/access.log && \
+    chown www-data:www-data /run/nginx.pid /var/log/nginx/error.log /var/log/nginx/access.log
+
+RUN mkdir -p /app && chown -R www-data:www-data /app
+
+COPY --chown=www-data:www-data docker/nginx/ /etc/nginx/
+
+COPY --chown=www-data:www-data --from=node /app /app/wordpress/wp-content/themes/detroit-axle/
+COPY --chown=www-data:www-data --from=composer /app/vendor /app/vendor
+COPY --chown=www-data:www-data --from=composer /app/wordpress /app/wordpress
+COPY --chown=www-data:www-data ./wordpress/images /app/wordpress/images
+ADD --chown=www-data:www-data ./wp-content/mu-plugins /app/wordpress/wp-content/mu-plugins
+ADD --chown=www-data:www-data ./wp-content/plugins /app/wordpress/wp-content/plugins
+ADD --chown=www-data:www-data ./wp-content/disabled-plugins /app/wordpress/wp-content/disabled-plugins
+
+USER www-data

@@ -1,0 +1,70 @@
+version: '3.8'
+
+volumes:
+  mysql:
+  webroot:
+  redis:
+
+services:
+  nginx:
+    build:
+      dockerfile: 'docker/nginx/Dockerfile'
+      context: '.'
+      args:
+        - UID=${UID}
+    user: '${UID}:${UID}'
+    volumes:
+      - webroot:/app
+      - ./docker/nginx/templates:/etc/nginx/templates
+    ports:
+      - 80:80
+    environment:
+      - PHP_FPM_WP_ADMIN_HOST=php-fpm
+      - PHP_FPM_WP_ADMIN_PORT=9000
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    build:
+      dockerfile: 'docker/wordpress/Dockerfile'
+      context: '.'
+      args:
+        - UID=${UID}
+    environment:
+      - OPCACHE_ENABLED=0
+      - DB_HOST=mysql
+      - ENVIRONMENT=local
+    extra_hosts:
+      - 'downloads.wordpress.org:198.143.164.250'
+      - 'api.wordpress.org:198.143.164.251'
+    user: '${UID}:${UID}'
+    working_dir: /app/wordpress
+    volumes:
+      - ./:/home/www-data/app
+      - webroot:/app
+    depends_on:
+      - composer
+
+  composer:
+    build:
+      dockerfile: 'docker/composer/Dockerfile'
+      context: '.'
+      args:
+        - UID=${UID}
+    user: '${UID}:${UID}'
+    restart: 'no'
+    volumes:
+      - ./:/app
+    command: install -o
+
+  node:
+    build:
+      dockerfile: 'docker/node/Dockerfile'
+      context: '.'
+      args:
+        - UID=${UID}
+    user: '${UID}:${UID}'
+    working_dir: /home/node/app
+   # command: /bin/sh -c 'cd /home/node/app/wp-content/themes/detroit-axle && npm install --production=false && npm run build-watch'
+    volumes:
+      - ./:/home/node/app

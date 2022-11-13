@@ -1,0 +1,79 @@
+{
+    "name": "code2pixels/mandeehernandez",
+    "description": "Portfolio Website",
+    "type": "project",
+    "repositories": [
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org",
+            "only": [
+                "wpackagist-plugin/*",
+                "wpackagist-theme/*"
+            ]
+        },
+        {
+            "type": "composer",
+            "url": "https://composer.deliciousbrains.com"
+        },
+        {
+            "type": "composer",
+            "url": "https://my.yoast.com/packages/",
+            "only": [
+                "yoast/wordpress-seo-premium",
+                "yoast/wpseo-woocommerce"
+            ]
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "johnpbloch/wordpress": "5.9.3",
+        "rmccue/requests": "^1.8",
+        "vlucas/phpdotenv": "^5.3.0",
+        "wp-cli/wp-cli-bundle": "^2.5",
+        "wpackagist-plugin/wp-crontrol": "^1.14"
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "7.4",
+            "ext-pdo": "7.4",
+            "ext-pdo_mysql": "7.4"
+        },
+        "allow-plugins": {
+            "composer/installers": true,
+            "johnpbloch/wordpress-core-installer": true
+        }
+    },
+    "extra": {
+        "installer-paths": {
+            "wordpress/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
+            "wordpress/wp-content/themes/{$name}/": ["type:wordpress-theme"]
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "./bin/wordpress-clean-default-dependencies.sh $(pwd)",
+            "@create-wp-content-directories",
+            "@link-custom-themes-and-plugins"
+        ],
+        "create-wp-content-directories": [
+            "mkdir -p wordpress/wp-content/themes",
+            "mkdir -p wordpress/wp-content/plugins",
+            "mkdir -p wordpress/wp-content/mu-plugins",
+            "mkdir -p wordpress/wp-content/disabled-plugins"
+        ],
+        "link-custom-themes-and-plugins": [
+            "cd wordpress/wp-content/themes && ln -snf ../../../wp-content/themes/* .",
+            "cd wordpress/wp-content/plugins && ln -snf ../../../wp-content/plugins/* .",
+            "cd wordpress/wp-content/mu-plugins && ln -snf ../../../wp-content/mu-plugins/* .",
+            "cd wordpress/wp-content/disabled-plugins && ln -snf ../../../wp-content/disabled-plugins/* .",
+            "cd wordpress/wp-content && ln -snf ../../wp-content/object-cache.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
