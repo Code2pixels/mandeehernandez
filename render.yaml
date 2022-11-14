@@ -1,0 +1,42 @@
+services:
+# Production Services
+- type: web
+  name: mandee-website
+  env: docker
+  region: ohio
+  plan: starter
+  branch: master
+  dockerfilePath: ./docker/Dockerfile.web
+  dockerContext: .
+  envVars:
+    - fromGroup: code2pixels-main-env
+
+# - type: web
+#   name: detroit-axle-adminer-web-ohio
+#   env: docker
+#   region: ohio
+#   plan: free
+#   branch: main
+#   dockerfilePath: ./docker/adminer/Dockerfile
+#   dockerContext: .
+#   autoDeploy: false
+
+# envVarGroups:
+# - name: code2pixels-env-var-group
+#   envVars:
+#     - key: AUTH_KEY
+#       generateValue: true
+#     - key: SECURE_AUTH_KEY
+#       generateValue: true
+#     - key: LOGGED_IN_KEY
+#       generateValue: true
+#     - key: NONCE_KEY
+#       generateValue: true
+#     - key: AUTH_SALT
+#       generateValue: true
+#     - key: SECURE_AUTH_SALT
+#       generateValue: true
+#     - key: LOGGED_IN_SALT
+#       generateValue: true
+#     - key: NONCE_SALT
+#       generateValue: true
