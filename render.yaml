@@ -1,35 +1,15 @@
-# services:
-# # Production Services
-# - type: web
-#   name: detroit-axle-web-production
-#   env: docker
-#   region: ohio
-#   plan: starter
-#   branch: main
-#   dockerfilePath: ./docker/Dockerfile.web
-#   dockerContext: .
-#   envVars:
-#     - key: PHP_FPM_HOST
-#       fromService:
-#         name: detroit-axle-php-fpm-production
-#         type: pserv
-#         property: host
-#     - key: PHP_FPM_PORT
-#       fromService:
-#         name: detroit-axle-php-fpm-production
-#         type: pserv
-#         property: port
-#     - key: PHP_FPM_WP_ADMIN_HOST
-#       fromService:
-#         name: detroit-axle-php-fpm-admin-production
-#         type: pserv
-#         property: host
-#     - key: PHP_FPM_WP_ADMIN_PORT
-#       fromService:
-#         name: detroit-axle-php-fpm-admin-production
-#         type: pserv
-#         property: port
-#     - fromGroup: detroit-axle-env-var-group
+services:
+# Production Services
+- type: web
+  name: mandee-website
+  env: docker
+  region: ohio
+  plan: starter
+  branch: main
+  dockerfilePath: ./docker/Dockerfile.web
+  dockerContext: .
+  envVars:
+    - fromGroup: code2pixels-main-env
 
 # - type: web
 #   name: detroit-axle-adminer-web-ohio
